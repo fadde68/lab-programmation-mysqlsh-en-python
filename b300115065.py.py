@@ -66,6 +66,15 @@ def former_des_chefs(docs):
   return docs
 
 
+ # Ajout manuel
+  maColl.add({"HeadOfState": "Marc Ravalomanana","GovernmentForm": "Republic"}).execute()
+
+
+# Détruit la collection
+  #db.drop_collection(nomColl)
+
+
+
 def main():
   docs = lecture('b300115065.json')
   chefs = former_des_chefs(docs)
