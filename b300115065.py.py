@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: CollegeBoreal
+@author: 300115065
 """
 
 import json
@@ -45,9 +45,33 @@ def lecture(fichier):
   return docs
 
 
+def former_des_chefs(docs):
+
+  # Crée une nouvelle collection 'chefs_de_gouvernement'
+  nomColl = 'chefs_de_gouvernement'
+  maColl = db.create_collection(nomColl)
+
+  # Manipuler la collection et la rajouter à la nouvelle
+  for doc in docs.fetch_all():
+    for country in doc.countries:
+      # Insert des documents JSON de type government
+      maColl.add(country['government']).execute()
+
+  # Trouver tous les documents JSON et les mettre en mémoire
+  docs = maColl.find().execute()
+
+  # Détruit la collection
+  db.drop_collection(nomColl)
+
+  return docs
+
+
 def main():
   docs = lecture('b300115065.json')
-  print(len(docs.fetch_all()))
+  chefs = former_des_chefs(docs)
+  print(len(chefs.fetch_all()))
+  # Ne pas oublier de remercier le gestionnaire de BD
+  session.close
 
 # Ne pas oublier de remercier le gestionnaire de BD
   session.close
