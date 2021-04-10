@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-
 @author: 300115065
 """
 
@@ -19,7 +18,9 @@ session = mysqlx.get_session({
     "password": "password"
 })
 
+
 db = session.get_schema("world_x")
+
 
 def lecture(fichier):
 
@@ -45,11 +46,17 @@ def lecture(fichier):
   return docs
 
 
+
 def former_des_chefs(docs):
 
   # Crée une nouvelle collection 'chefs_de_gouvernement'
   nomColl = 'chefs_de_gouvernement'
   maColl = db.create_collection(nomColl)
+
+
+  # Ajout manuel
+  maColl.add({"HeadOfState": "Marc Ravalomanana","GovernmentForm": "Republic"}).execute()
+
 
   # Manipuler la collection et la rajouter à la nouvelle
   for doc in docs.fetch_all():
@@ -61,29 +68,46 @@ def former_des_chefs(docs):
   docs = maColl.find().execute()
 
   # Détruit la collection
-  db.drop_collection(nomColl)
+  #db.drop_collection(nomColl)
 
   return docs
 
 
- # Ajout manuel
-  maColl.add({"HeadOfState": "Marc Ravalomanana","GovernmentForm": "Republic"}).execute()
 
+def former_des_donnees(docs):
 
-# Détruit la collection
+  # Crée une nouvelle collection 'Donnees_demographiques'
+  nomColl = 'Donnees_demographiques'
+  maColl = db.create_collection(nomColl)
+
+# Ajout manuel
+  maColl.add({"Population": 11937000,"LifeExpectancy": 46.70000076293945}).execute()
+  maColl.add({"Population": 81340000,"LifeExpectancy": 69.47269439697275}).execute()
+  maColl.add({"Population": 6097000,"LifeExpectancy": 50.20000076293945}).execute()
+  
+# Manipuler la collection et la rajouter à la nouvelle
+  for doc in docs.fetch_all():
+    for country in doc.countries:
+      # Insert des documents JSON de type demographics
+      maColl.add(country['demographics']).execute()
+  # Trouver tous les documents JSON et les mettre en mémoire
+  docs = maColl.find().execute()
+
+  # Détruit la collection
   #db.drop_collection(nomColl)
+ 
+  return docs
 
-
-
+   
+   
 def main():
   docs = lecture('b300115065.json')
   chefs = former_des_chefs(docs)
-  print(len(chefs.fetch_all()))
+  donnees = former_des_donnees(docs)
+  print(len(docs.fetch_all()))
   # Ne pas oublier de remercier le gestionnaire de BD
   session.close
 
-# Ne pas oublier de remercier le gestionnaire de BD
-  session.close
 
 if __name__== "__main__":
     main()
